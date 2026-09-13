@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelioPool: Aquecimento Solar e Óptica da Refração</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js para visualização 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>☀️ HelioPool <span>Óptica & Sustentabilidade</span></h1>
+            <nav>
+                <ul>
+                    <li><a href="#calculadora">Calculadora Térmica</a></li>
+                    <li><a href="#refracao">Física da Refração</a></li>
+                    <li><a href="#espectro">Espectro Eletromagnético</a></li>
+                    <li><a href="#integracao">Sinergia Óptica-Térmica</a></li>
+                    <li><a href="#modelo3d">Modelo 3D</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
+    <main class="container">
+        <!-- Seção 1: Calculadora Interativa -->
+        <section id="calculadora" class="card">
+            <h2>🌡️ Simulador de Aquecimento Solar Inteligente</h2>
+            <p>Calcule a eficiência e o tempo estimado para aquecer sua piscina com base nos dados da sua região (CEP).</p>
+            <form id="solarForm" class="grid-form">
+                <div class="form-group">
+                    <label for="cep">CEP (Simulação de Radiação)</label>
+                    <input type="text" id="cep" placeholder="Ex: 01001-000" maxlength="9">
+                </div>
+                <div class="form-group">
+                    <label for="area">Área dos Coletores (m²)</label>
+                    <input type="number" id="area" min="1" step="0.5" required>
+                </div>
+                <div class="form-group">
+                    <label for="volume">Volume da Piscina (Litros)</label>
+                    <input type="number" id="volume" min="1000" step="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="tempAmbiente">Temperatura Ambiente Média (°C)</label>
+                    <input type="number" id="tempAmbiente" value="20" required>
+                </div>
+                <div class="form-group">
+                    <label for="tempAlvo">Temperatura Alvo da Água (°C)</label>
+                    <input type="number" id="tempAlvo" value="28" required>
+                </div>
+                <div class="form-group">
+                    <label for="radiacao">Radiação Solar Local (kWh/m²/dia)</label>
+                    <input type="number" id="radiacao" step="0.1" value="5.0" readonly class="readonly-input">
+                    <small>Preencha o CEP para atualizar automaticamente.</small>
+                </div>
+                <button type="submit" class="btn-primary">Calcular Eficiência</button>
+            </form>
+            <div id="resultado" class="resultado-box hidden">
+                <h3>📊 Resultado da Simulação</h3>
+                <p><strong>Energia Necessária:</strong> <span id="resEnergia">0</span> kWh</p>
+                <p><strong>Energia Diária Captada:</strong> <span id="resDiaria">0</span> kWh</p>
+                <p><strong>Tempo Estimado de Aquecimento:</strong> <span id="resTempo">0</span> dias</p>
+                <p class="obs">*Considerando eficiência média do coletor de 60% e perdas térmicas noturnas mínimas com capa de proteção.</p>
+            </div>
+        </section>
+
+        <!-- Seção 2: Física da Refração -->
+        <section id="refracao" class="card">
+            <h2>💧 A Dispersão e Refração da Luz na Água</h2>
+            <p>A <strong>refração</strong> é a mudança de velocidade e direção da luz ao passar de um meio para outro (ex: ar para água). O <strong>índice de refração (n)</strong> determina o quanto a luz desvia.</p>
+            
+            <h3>Índice de Refração de Materiais Comuns</h3>
+            <table class="refraction-table">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Índice de Refração (n)</th>
+                        <th>Velocidade da Luz no Meio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Vácuo</td><td>1.0000</td><td>300.000 km/s</td></tr>
+                    <tr><td>Ar (CNTP)</td><td>1.0003</td><td>~299.910 km/s</td></tr>
+                    <tr><td>Água (20°C)</td><td>1.3330</td><td>~225.000 km/s</td></tr>
+                    <tr><td>Acrílico</td><td>1.4900</td><td>~201.000 km/s</td></tr>
+                    <tr><td>Vidro (Crown)</td><td>1.5200</td><td>~197.000 km/s</td></tr>
+                </tbody>
+            </table>
+
+            <div class="interactive-snell">
+                <h3>Simulador da Lei de Snell</h3>
+                <p>Veja como o ângulo de incidência afeta o ângulo de refração na água.</p>
+                <label>Ângulo de Incidência (°): <span id="angleValue">45</span>°</label>
+                <input type="range" id="angleSlider" min="0" max="85" value="45">
+                <p><strong>Ângulo de Refração na Água:</strong> <span id="refractedAngle">0</span>°</p>
+                <canvas id="refractionCanvas" width="400" height="250"></canvas>
+            </div>
+        </section>
+
+        <!-- Seção 3: Espectro Eletromagnético -->
+        <section id="espectro" class="card">
+            <h2>🌈 Espectro Eletromagnético e Luz Visível</h2>
+            <p>A luz branca do sol é policromática. Ao entrar na água, ela sofre <strong>dispersão</strong> (Equação de Cauchy), pois o índice de refração varia com o comprimento de onda (λ).</p>
+            
+            <div class="spectrum-bar">
+                <div class="color-band" style="background: #ff0000;" data-color="Vermelho" data-wl="700 nm" data-heat="Alto (Infravermelho próximo)"></div>
+                <div class="color-band" style="background: #ff7f00;" data-color="Laranja" data-wl="620 nm" data-heat="Médio-Alto"></div>
+                <div class="color-band" style="background: #ffff00;" data-color="Amarelo" data-wl="580 nm" data-heat="Médio"></div>
+                <div class="color-band" style="background: #00ff00;" data-color="Verde" data-wl="530 nm" data-heat="Médio"></div>
+                <div class="color-band" style="background: #0000ff;" data-color="Azul" data-wl="470 nm" data-heat="Baixo"></div>
+                <div class="color-band" style="background: #4b0082;" data-color="Anil" data-wl="440 nm" data-heat="Baixo"></div>
+                <div class="color-band" style="background: #8f00ff;" data-color="Violeta" data-wl="400 nm" data-heat="Mínimo (Maior refração)"></div>
+            </div>
+            <div id="spectrumInfo" class="spectrum-info">
+                Passe o mouse sobre as cores para ver detalhes.
+            </div>
+            <p class="highlight">💡 <strong>Fato Térmico:</strong> A radiação infravermelha (vermelho e além) carrega a maior parte da energia térmica do sol. A água é altamente absorvente nessa faixa, aquecendo-se rapidamente nas camadas superficiais.</p>
+        </section>
+
+        <!-- Seção 4: Integração dos Temas -->
+        <section id="integracao" class="card">
+            <h2>🔗 Como a Refração Ajuda ou Atrapalha o Aquecimento?</h2>
+            <div class="grid-2">
+                <div class="pro">
+                    <h3>✅ Como Ajuda (Potencializa)</h3>
+                    <ul>
+                        <li><strong>Penetração Profunda:</strong> A refração permite que a luz visível e o infravermelho próximo penetrem na água, aquecendo o volume de forma volumétrica, não apenas na superfície.</li>
+                        <li><strong>Efeito Estufa na Água:</strong> A água é transparente à luz visível (que entra), mas opaca à radiação infravermelha térmica emitida pela água aquecida (que tenta sair), aprisionando o calor.</li>
+                    </ul>
+                </div>
+                <div class="con">
+                    <h3>❌ Como Atrapalha (Desafios)</h3>
+                    <ul>
+                        <li><strong>Reflexão de Fresnel:</strong> Em ângulos de incidência muito rasos (início da manhã/fim da tarde), a maior parte da luz é <em>refletida</em> na superfície da água em vez de refratada, perdendo energia útil.</li>
+                        <li><strong>Dispersão por Ondulações:</strong> A superfície agitada da piscina espalha a luz em múltiplas direções, aumentando a reflexão e reduzindo a eficiência de captação direta.</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="conclusion"><strong>Solução de Engenharia:</strong> Utilizar capas térmicas transparentes (bolhas de ar) reduz a evaporação e a reflexão superficial, enquanto a orientação correta dos coletores solares maximiza o ângulo de incidência próximo a 90°, minimizando perdas por reflexão e maximizando a refração útil para dentro do sistema.</p>
+        </section>
+
+        <!-- Seção 5: Visualização 3D -->
+        <section id="modelo3d" class="card">
+            <h2>🧊 Visualização 3D: Piscina e Incidência Solar</h2>
+            <p>Representação interativa da piscina e dos raios solares. Use o mouse para rotacionar e dar zoom.</p>
+            <div id="canvas3d"></div>
+            <p class="small-note">Nota: O modelo utiliza renderização procedural via Three.js, complementada pelos arquivos <code>pool_model.obj</code> e <code>pool_model.mtl</code> incluídos no repositório para compatibilidade com softwares de modelagem externa.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Projeto desenvolvido para fins educacionais e de sustentabilidade. Fusão de Óptica Aplicada e Energia Solar Térmica.</p>
+            <p>&copy; 2026 - Repositório GitHub</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
