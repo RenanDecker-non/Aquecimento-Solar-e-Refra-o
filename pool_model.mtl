@@ -1,1 +1,18 @@
+# pool_model.mtl
+# Definição de materiais para o modelo da piscina
 
+newmtl WaterMaterial
+Kd 0.0 0.46 0.71   # Cor azul da água (RGB normalizado)
+Ka 0.1 0.1 0.1     # Luz ambiente
+Ks 0.5 0.5 0.5     # Especular (brilho)
+Ns 100.0           # Brilho alto (superfície molhada)
+d 0.7              # Transparência (água)
+illum 2            # Modelo de iluminação com especular
+
+newmtl EdgeMaterial
+Kd 0.9 0.9 0.9     # Cor branca/cinza clara para a borda
+Ka 0.2 0.2 0.2
+Ks 0.1 0.1 0.1
+Ns 10.0
+d 1.0              # Opaco
+illum 1
